@@ -41,8 +41,8 @@ Legend:
 | `actions/install-dalamud/action.yml` | Generic | Pinned Dalamud build + SHA-256, so releases build against what was tested in-game (1f9b90b). Pin values are per-project state |
 | `dependabot.yml` | Generic | 7-day cooldown; ignore Dalamud.NET.Sdk majors (= API level, bumped by hand) (10a17a1) |
 | `zizmor.yml` | Generic | `self-repository` disabled until actionlint supports `$/` |
-| `pull_request_template.md` | Parameterised | Why / What changed / Risk / Verified. The Risk prompt about linear matching and capped lists is chat-specific; generalise to "untrusted game or user text" |
-| `ISSUE_TEMPLATE/*` | Parameterised | Forms; bug form mentions the plugin |
+| `pull_request_template.md` | Shared | Why / What changed / Risk / Verified. Moved, with the Risk prompt generalised to "untrusted game or user text", to the owner-level `Cellar-Mander/.github` repo |
+| `ISSUE_TEMPLATE/*` | Shared | Moved, without plugin names, to `Cellar-Mander/.github`. A repo falls back to them only if it has no `.github/ISSUE_TEMPLATE/` folder |
 
 All workflows share: actions pinned to full SHA with version comment, top-level `permissions: contents: read`, `persist-credentials: false` unless a step pushes (03a2f1a).
 
