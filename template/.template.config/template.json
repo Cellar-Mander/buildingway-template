@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Cellar Mander",
+  "classifications": [ "Dalamud", "FFXIV", "Plugin" ],
+  "identity": "Buildingway.DalamudPlugin",
+  "name": "Dalamud plugin (Buildingway)",
+  "shortName": "dalamud-plugin",
+  "description": "A Dalamud plugin repo: plugin, game-independent Core with tests, CI callers into buildingway-ci, and doc stubs.",
+  "tags": { "language": "C#", "type": "solution" },
+  "sourceName": "MyPlugin",
+  "preferNameDirectory": true,
+  "symbols": {
+    "displayName": {
+      "type": "parameter",
+      "datatype": "text",
+      "isRequired": true,
+      "description": "Name players see in the plugin installer, e.g. \"Say My Name\"",
+      "replaces": "My Plugin Display Name"
+    },
+    "pluginAuthor": {
+      "type": "parameter",
+      "datatype": "text",
+      "isRequired": true,
+      "description": "Author in the manifest and LICENSE",
+      "replaces": "My Plugin Author"
+    },
+    "repoUrl": {
+      "type": "parameter",
+      "datatype": "text",
+      "isRequired": true,
+      "description": "GitHub repository URL, e.g. https://github.com/Cellar-Mander/say-my-name",
+      "replaces": "https://github.com/my-plugin-owner/my-plugin-repo"
+    },
+    "punchline": {
+      "type": "parameter",
+      "datatype": "text",
+      "isRequired": true,
+      "description": "One-line summary shown in the plugin installer",
+      "replaces": "My plugin punchline."
+    },
+    "rawUrl": {
+      "type": "derived",
+      "valueSource": "repoUrl",
+      "valueTransform": "githubToRaw",
+      "replaces": "https://raw.githubusercontent.com/my-plugin-owner/my-plugin-repo"
+    },
+    "upperName": {
+      "type": "derived",
+      "valueSource": "name",
+      "valueTransform": "upperCase",
+      "replaces": "MYPLUGIN"
+    },
+    "year": {
+      "type": "generated",
+      "generator": "now",
+      "parameters": { "format": "yyyy" },
+      "replaces": "2099"
+    }
+  },
+  "forms": {
+    "githubToRaw": {
+      "identifier": "replace",
+      "pattern": "^https://github\\.com/",
+      "replacement": "https://raw.githubusercontent.com/"
+    },
+    "upperCase": {
+      "identifier": "upperCase"
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        { "exclude": [ "**/bin/**", "**/obj/**", "**/packages.lock.json", "**/StrykerOutput/**" ] }
+      ]
+    }
+  ]
+}

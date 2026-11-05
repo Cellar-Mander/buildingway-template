@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="MyPlugin.Core.Tests/MyPlugin.Core.Tests.csproj" />
+  <Project Path="MyPlugin.Core/MyPlugin.Core.csproj" />
+  <Project Path="MyPlugin/MyPlugin.csproj">
+    <Platform Project="x64" />
+  </Project>
+</Solution>
