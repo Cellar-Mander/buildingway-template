@@ -1,0 +1,174 @@
+name: Template
+
+# Generates a project from the template and runs on it what its own CI would: placeholder check,
+# Core tests and tool restore (Linux), formatting and the full build against its pinned Dalamud
+# (Windows), and actionlint and zizmor on its workflows. A template change that breaks a new
+# project fails here, not in the next repo made from it.
+# Run it by hand (Actions > Template > Run workflow) before generating a new repo, to catch drift
+# since the last change: the 10.0.x SDK, runner images and GitHub Packages access aren't pinned.
+# No path filter: a required check that a filter skips never reports, which blocks the PR.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Generated into sample/; the name exercises the name replacements (TemplateCheck, TEMPLATECHECK,
+  # /templatecheck)
+  SAMPLE_NAME: TemplateCheck
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+
+  # This repo's own workflows
+  lint:
+    uses: Cellar-Mander/buildingway-ci/.github/workflows/workflow-lint.yml@0898a4c49caaae87443d8905c28841e52e10c381 # v0.5.0
+
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read  # Buildingway.Build and Buildingway.Tools from GitHub Packages
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+
+    - name: Install .NET
+      uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Generate sample
+      run: .github/generate-sample.sh
+
+    # Any template placeholder left in a generated file is a missing "replaces" in template.json
+    - name: Check placeholders
+      working-directory: sample
+      run: |
+        if grep -rnIE 'MyPlugin|MYPLUGIN|myplugin|My Plugin|my-plugin-|2099' .; then
+          echo "::error::Template placeholders left in the generated project (above)"
+          exit 1
+        fi
+
+    # The GitHub Packages feed is named "buildingway" in the generated nuget.config; each
+    # Buildingway.* package must grant this repo read access under Manage Actions access
+    - name: Restore tools
+      working-directory: sample
+      env:
+        NuGetPackageSourceCredentials_buildingway: Username=token;Password=${{ github.token }}
+      run: dotnet tool restore
+
+    - name: Test
+      working-directory: sample
+      env:
+        NuGetPackageSourceCredentials_buildingway: Username=token;Password=${{ github.token }}
+      run: dotnet test "$SAMPLE_NAME.Core.Tests" --configuration Release
+
+  # The plugin builds against a Dalamud install, so this runs on Windows where the SDK finds it
+  build:
+    runs-on: windows-2022
+    permissions:
+      contents: read
+      packages: read  # Buildingway.Build from GitHub Packages
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+
+    - name: Install .NET
+      uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Generate sample
+      run: .github/generate-sample.sh
+
+    # The same action and pin as buildingway-ci's pr-build.yml at the version the template calls
+    - name: Install Dalamud
+      uses: Cellar-Mander/buildingway-ci/.github/actions/install-dalamud@a5e4eb37a0fdeff14f16ac4fde4de475e0ff2666
+      with:
+        pin-file: sample/.github/dalamud.env
+
+    - name: Check formatting
+      working-directory: sample
+      env:
+        NuGetPackageSourceCredentials_buildingway: Username=token;Password=${{ github.token }}
+      run: dotnet format --verify-no-changes
+
+    - name: Build
+      working-directory: sample
+      env:
+        NuGetPackageSourceCredentials_buildingway: Username=token;Password=${{ github.token }}
+      run: dotnet build --configuration Release
+
+    # The assembly lands in bin/x64/Release; DalamudPackager writes the manifest and zip into a
+    # folder named after the plugin, which is what pr-build.yml uploads and release.yml publishes
+    - name: Check plugin output
+      working-directory: sample
+      run: |
+        bin="$SAMPLE_NAME/bin/x64/Release"
+        ls -R "$bin"
+        for f in "$SAMPLE_NAME.dll" "$SAMPLE_NAME/$SAMPLE_NAME.json" "$SAMPLE_NAME/latest.zip"; do
+          if [ ! -f "$bin/$f" ]; then
+            echo "::error::$bin/$f wasn't built"
+            exit 1
+          fi
+        done
+
+  # The generated project's workflows: the template's copies, after replacement
+  sample-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+
+    - name: Install .NET
+      uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Generate sample
+      run: .github/generate-sample.sh
+
+    # Same version and SHA-256 as buildingway-ci's workflow-lint.yml
+    - name: Install actionlint
+      env:
+        ACTIONLINT_VERSION: 1.7.12
+        ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+      run: |
+        tarball=actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz
+        curl -fsSLo "$RUNNER_TEMP/$tarball" "https://github.com/rhysd/actionlint/releases/download/v$ACTIONLINT_VERSION/$tarball"
+        echo "$ACTIONLINT_SHA256  $RUNNER_TEMP/$tarball" | sha256sum -c -
+        tar -xzf "$RUNNER_TEMP/$tarball" -C "$RUNNER_TEMP" actionlint
+
+    - name: actionlint
+      working-directory: sample
+      env:
+        FORMAT: '{{range $err := .}}::error file=sample/{{$err.Filepath}},line={{$err.Line}},col={{$err.Column}}::{{$err.Message}}\n{{end}}'
+      run: '"$RUNNER_TEMP/actionlint" -format "$FORMAT" .github/workflows/*.yml'
+
+    - name: zizmor
+      uses: zizmorcore/zizmor-action@53290badfa369cb0bf7ad16342cb62c2fa47ac7b # v0.8.0
+      with:
+        version: 1.31.1
+        inputs: sample
+        advanced-security: false
+        annotations: true

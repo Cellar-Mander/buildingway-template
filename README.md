@@ -26,3 +26,16 @@ generated `CONTRIBUTING.md`.
 `<` and `&`, or escape them by hand afterwards.
 
 To pick up template changes, `dotnet new install ./template --force`.
+
+## Checking a change
+
+The Template workflow (`.github/workflows/template.yml`) generates a project into `sample/` with
+`.github/generate-sample.sh` and runs on it what its own CI would: a check for unreplaced
+placeholders, tool restore and the Core tests on Linux, formatting and the full build against the
+pinned Dalamud on Windows, and actionlint and zizmor on its workflows. It runs on every push and
+PR to main. Before generating a new repo, run it by hand (Actions > Template > Run workflow): the
+10.0.x SDK, runner images and GitHub Packages access can change since the last run. Each `Buildingway.*` package on
+GitHub Packages must grant this repository read access under Manage Actions access.
+
+To try a change locally, run `.github/generate-sample.sh` from the repo root (it reinstalls the
+template from this checkout), then build or test in `sample/`.
