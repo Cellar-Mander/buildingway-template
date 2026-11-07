@@ -116,13 +116,16 @@ jobs:
         NuGetPackageSourceCredentials_buildingway: Username=token;Password=${{ github.token }}
       run: dotnet build --configuration Release
 
+    # The assembly lands in bin/x64/Release; DalamudPackager writes the manifest and zip into a
+    # folder named after the plugin, which is what pr-build.yml uploads and release.yml publishes
     - name: Check plugin output
       working-directory: sample
       run: |
-        out="$SAMPLE_NAME/bin/x64/Release/$SAMPLE_NAME"
-        for f in "$SAMPLE_NAME.dll" "$SAMPLE_NAME.json" latest.zip; do
-          if [ ! -f "$out/$f" ]; then
-            echo "::error::$out/$f wasn't built"
+        bin="$SAMPLE_NAME/bin/x64/Release"
+        ls -R "$bin"
+        for f in "$SAMPLE_NAME.dll" "$SAMPLE_NAME/$SAMPLE_NAME.json" "$SAMPLE_NAME/latest.zip"; do
+          if [ ! -f "$bin/$f" ]; then
+            echo "::error::$bin/$f wasn't built"
             exit 1
           fi
         done
