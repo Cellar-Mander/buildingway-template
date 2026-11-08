@@ -101,7 +101,7 @@ Pin each action to a full commit SHA with its version in a comment, as Dependabo
 
 ## Untrusted input
 
-Text from other players or the game (chat, names, addon strings) and settings text the user types are untrusted. Processing either must stay linear in its length, so no backtracking regex. New user-configurable lists and text fields need a cap. A PR that touches either says so under Risk in its description and says how those two points hold. The PR template asks the same, but agent-written PR bodies skip it.
+Text from other players or the game (chat, names, addon strings) and settings text the user types are untrusted. Processing either must stay linear in its length, so no backtracking regex: the build rejects `Regex` and `[GeneratedRegex]` (RS0030) outside test projects. Where a regex is needed, use `RegexOptions.NonBacktracking` and suppress RS0030 on that line with the reason, e.g. `#pragma warning disable RS0030 // NonBacktracking: linear in the input`. New user-configurable lists and text fields need a cap. A PR that touches either says so under Risk in its description and says how those two points hold. The PR template asks the same, but agent-written PR bodies skip it.
 
 ## Testing in-game
 
