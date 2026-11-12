@@ -39,3 +39,8 @@ GitHub Packages must grant this repository read access under Manage Actions acce
 
 To try a change locally, run `.github/generate-sample.sh` from the repo root (it reinstalls the
 template from this checkout), then build or test in `sample/`.
+
+## Adding a lesson
+
+How a lesson from a plugin repo becomes a change here or in the shared packages, and how it
+reaches repos that already exist: [docs/lessons.md](docs/lessons.md).
