@@ -42,4 +42,4 @@ jobs:
       plugin: MyPlugin
       channel: ${{ inputs.channel }}
       # Every required check's workflow; each accepts workflow_dispatch
-      checks: test.yml workflow-lint.yml pr-build.yml
+      checks: test.yml workflow-lint.yml pr-build.yml pr-size.yml

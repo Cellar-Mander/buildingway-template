@@ -196,7 +196,7 @@ Once, after creating the repository from the template. GitHub settings aren't fi
 3. Give the repository read access to each Buildingway package, or CI can't restore it: on GitHub, for each of the `Buildingway.Build` and `Buildingway.Tools` packages, open the package's settings → Manage Actions access → Add repository → this repository, role Read.
 4. Settings → Actions → General → Workflow permissions: read, and tick "Allow GitHub Actions to create and approve pull requests", for the `repo.json` PR.
 5. Create the labels the workflows read: `no-changelog` and `mutation`.
-6. Add a ruleset on `main`: require a pull request, block deletion and force pushes, and require the status checks `test / test`, `pr-build / build`, `lint / actionlint` and `lint / zizmor`, with branches up to date. Leave `test / revert-check`, Changelog and Mutation out: they only inform.
+6. Add a ruleset on `main`: require a pull request, block deletion and force pushes, and require the status checks `test / test`, `pr-build / build`, `size / size`, `lint / actionlint` and `lint / zizmor`, with branches up to date. Leave `test / revert-check`, Changelog and Mutation out: they only inform.
 7. Move the Dalamud pin in `.github/dalamud.env` to the Dalamud you test with, as its comment describes.
 
 ## License
