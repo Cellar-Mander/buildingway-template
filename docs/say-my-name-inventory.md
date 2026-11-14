@@ -36,7 +36,7 @@ Legend:
 | `workflows/pr-build.yml` | Generic | Windows build against Dalamud + `dotnet format --verify-no-changes`; `workflow_dispatch` for repo.json PRs (8c5bebe) |
 | `workflows/workflow-lint.yml` | Generic | actionlint (pinned by SHA-256) + zizmor. **No path filter**: a required check a filter skips never reports and blocks the PR (48b7a33) |
 | `workflows/changelog.yml` | Parameterised | Flags plugin-code PRs without a CHANGELOG entry; `no-changelog` label; paths `{Name}/ {Name}.Core/` (trailing slash keeps `.Tests` out) (1d60d9e) |
-| `workflows/mutation.yml` | Parameterised | Nightly full run; PRs `--since` base; `mutation` label for full run (3ef78ee). Paths name the Core projects |
+| `workflows/mutation.yml` | Parameterised | Full run on demand; PRs `--since` base; `mutation` label for full run (3ef78ee). Paths name the Core projects |
 | `workflows/release.yml` | Parameterised | The largest piece of learned behaviour, see below. Hard-codes `SayMyName` in ~10 places |
 | `actions/install-dalamud/action.yml` | Generic | Pinned Dalamud build + SHA-256, so releases build against what was tested in-game (1f9b90b). Pin values are per-project state |
 | `dependabot.yml` | Generic | 7-day cooldown; ignore Dalamud.NET.Sdk majors (= API level, bumped by hand) (10a17a1) |
