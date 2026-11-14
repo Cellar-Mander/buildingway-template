@@ -17,4 +17,4 @@ jobs:
   size:
     # Not yet in a buildingway-ci release, so no tag comment (zizmor fails on a comment naming a
     # ref at another commit); move to the next tag, with its comment, with the other pins
-    uses: Cellar-Mander/buildingway-ci/.github/workflows/pr-size.yml@7be34f3a94e1322e8670c07782fa397757da5eb4
+    uses: Cellar-Mander/buildingway-ci/.github/workflows/pr-size.yml@98738d9d6f9294110f8ff7317f2300e3b1a52e72 # v0.9.0
