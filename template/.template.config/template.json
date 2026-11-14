@@ -21,7 +21,7 @@
       "type": "parameter",
       "datatype": "text",
       "isRequired": true,
-      "description": "Author in the manifest and LICENSE",
+      "description": "Author in the manifest and the README's copyright line",
       "replaces": "My Plugin Author"
     },
     "repoUrl": {
