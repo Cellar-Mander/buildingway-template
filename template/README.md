@@ -21,3 +21,9 @@ Then find My Plugin Display Name in `/xlplugins` and install it.
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) to build, test and release from source.
+
+## License
+
+Copyright (c) 2099 My Plugin Author.
+
+My Plugin Display Name is free software under the GNU Affero General Public License, version 3 or (at your option) any later version (AGPL-3.0-or-later). See [LICENSE.md](LICENSE.md).
