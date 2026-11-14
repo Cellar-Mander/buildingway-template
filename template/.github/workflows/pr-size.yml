@@ -1,0 +1,20 @@
+name: PR size
+
+# Fails a PR over 2000 changed lines (lockfiles left out): split it into PRs that can each be
+# reviewed on their own. A required check, with no override label.
+# No path filter: a required check that a filter skips never reports, which blocks the PR.
+on:
+  pull_request:
+    branches: [ main ]
+  # The release workflow dispatches this for its repo.json PR, which can't trigger it otherwise
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+
+  size:
+    # Not yet in a buildingway-ci release, so no tag comment (zizmor fails on a comment naming a
+    # ref at another commit); move to the next tag, with its comment, with the other pins
+    uses: Cellar-Mander/buildingway-ci/.github/workflows/pr-size.yml@7be34f3a94e1322e8670c07782fa397757da5eb4
