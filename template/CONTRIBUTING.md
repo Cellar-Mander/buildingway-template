@@ -32,7 +32,7 @@ dotnet build
 
 Output: `MyPlugin/bin/x64/Debug/MyPlugin.dll`. Commands are the same on every OS.
 
-Warnings are treated as errors in every project, and `dotnet format` enforces the code style; both come from the `Buildingway.Build` SDK. A local `.editorconfig` would override its style rules.
+Warnings are treated as errors in every project, and `dotnet format` enforces the code style; both come from the `Buildingway.Build` SDK. It also turns on .NET's performance rules (CA18xx), so idioms such as enumerating an `IEnumerable` twice (CA1851) or `ContainsKey` followed by the indexer (CA1854) fail the build. A local `.editorconfig` would override its style rules.
 
 ## Testing
 
